@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SafeUser } from '@/models/user';
 import { useToast } from '@/components/ui/use-toast';
+import { authService } from '@/services/authService';
 
 interface AuthContextType {
   user: SafeUser | null;
@@ -23,9 +24,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check if user is already logged in
     const checkLoginStatus = async () => {
       try {
-        const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const userData = await response.json();
+        const userData = await authService.getUser();
+        if (userData) {
           setUser(userData);
         }
       } catch (error) {
@@ -41,20 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to login');
-      }
-
-      const userData = await response.json();
+      const userData = await authService.login(email, password);
       setUser(userData);
       toast({
         title: 'Login Successful',
@@ -75,20 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (username: string, email: string, password: string) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to register');
-      }
-
-      const userData = await response.json();
+      const userData = await authService.register(username, email, password);
       setUser(userData);
       toast({
         title: 'Registration Successful',
@@ -109,14 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to logout');
-      }
-
+      await authService.logout();
       setUser(null);
       toast({
         title: 'Logout Successful',
@@ -135,19 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateUserProgress = async (problemId: string, solved: boolean, language: string) => {
     try {
-      const response = await fetch('/api/users/progress', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ problemId, solved, language }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update progress');
-      }
-
-      const updatedUser = await response.json();
+      const updatedUser = await authService.updateProgress(problemId, solved, language);
       setUser(updatedUser);
     } catch (error) {
       toast({
