@@ -1,32 +1,33 @@
 
+"use client";
+
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { problems } from "@/data/problems";
 
-export default function Profile() {
+export default function ProfilePage() {
   const { user, loading, logout } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate("/login");
+      router.push("/login");
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, router]);
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    router.push("/login");
   };
 
   if (loading) {

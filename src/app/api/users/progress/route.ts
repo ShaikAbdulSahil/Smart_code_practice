@@ -1,45 +1,41 @@
 
-import { NextApiRequest, NextApiResponse } from 'next';
-import { ObjectId } from 'mongodb';
-import jwt from 'jsonwebtoken';
-import clientPromise from '@/lib/mongodb';
-import { User, sanitizeUser } from '@/models/user';
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import { ObjectId } from "mongodb";
+import clientPromise from "@/lib/mongodb";
+import { User, sanitizeUser } from "@/models/user";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
+const JWT_SECRET = process.env.JWT_SECRET || 'jwt_fallback_secret';
+const COOKIE_NAME = 'auth_token';
 
+export async function POST(request: NextRequest) {
   try {
-    const token = req.cookies.token;
+    const token = cookies().get(COOKIE_NAME)?.value;
 
     if (!token) {
-      return res.status(401).json({ message: 'Not authenticated' });
+      return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
     }
 
     // Verify token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'jwt_fallback_secret'
-    ) as { id: string };
-
-    const { problemId, solved, language } = req.body;
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+    const { problemId, solved, language } = await request.json();
 
     if (!problemId || typeof solved !== 'boolean' || !language) {
-      return res.status(400).json({ message: 'Invalid request data' });
+      return NextResponse.json({ message: "Invalid request data" }, { status: 400 });
     }
 
     // Connect to MongoDB
     const client = await clientPromise;
     const db = client.db();
-    const usersCollection = db.collection<User>('users');
+    const usersCollection = db.collection<User>("users");
 
     // Find user
     const userId = new ObjectId(decoded.id);
     const user = await usersCollection.findOne({ _id: userId });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     const now = new Date();
@@ -88,12 +84,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const updatedUser = await usersCollection.findOne({ _id: userId });
     
     if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found after update' });
+      return NextResponse.json({ message: "User not found after update" }, { status: 404 });
     }
 
-    return res.status(200).json(sanitizeUser(updatedUser));
+    return NextResponse.json(sanitizeUser(updatedUser));
   } catch (error) {
     console.error('Update progress error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,6 +1,8 @@
 
+"use client";
+
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import Header from "@/components/Header";
 import CodeEditor from "@/components/CodeEditor";
 import Terminal from "@/components/Terminal";
@@ -16,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/AuthContext";
 
-const Index = () => {
+export default function HomePage() {
   const [selectedProblemId, setSelectedProblemId] = useState<string | null>(null);
   const [language, setLanguage] = useState<string>("javascript");
   const [code, setCode] = useState<string>("");
@@ -166,16 +168,16 @@ const Index = () => {
         {user ? (
           <div className="flex items-center gap-4">
             <p className="text-sm">Logged in as <span className="font-medium">{user.username}</span></p>
-            <Link to="/profile">
+            <Link href="/profile">
               <Button variant="outline" size="sm">Profile</Button>
             </Link>
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <Link to="/login">
+            <Link href="/login">
               <Button variant="outline" size="sm">Login</Button>
             </Link>
-            <Link to="/register">
+            <Link href="/register">
               <Button size="sm">Register</Button>
             </Link>
           </div>
@@ -240,6 +242,4 @@ const Index = () => {
       />
     </div>
   );
-};
-
-export default Index;
+}
