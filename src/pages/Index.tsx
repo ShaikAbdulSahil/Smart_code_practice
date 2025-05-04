@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import CodeEditor from "@/components/CodeEditor";
 import Terminal from "@/components/Terminal";
@@ -13,6 +14,7 @@ import { generateHint, analyzeCode } from "@/services/openai";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 const Index = () => {
   const [selectedProblemId, setSelectedProblemId] = useState<string | null>(null);
@@ -24,6 +26,7 @@ const Index = () => {
   const [aiDialogType, setAIDialogType] = useState<"hint" | "analysis">("hint");
   const [aiContent, setAIContent] = useState<string>("");
   const [isAILoading, setIsAILoading] = useState<boolean>(false);
+  const { user, updateUserProgress } = useAuth();
 
   // Set default problem when component mounts
   useEffect(() => {
@@ -52,6 +55,8 @@ const Index = () => {
   };
 
   const handleRunCode = async () => {
+    if (!selectedProblemId) return;
+    
     setIsRunning(true);
     setOutput("Running code...");
 
@@ -72,6 +77,19 @@ const Index = () => {
       outputText += `\nMemory Used: ${result.memory}`;
       
       setOutput(outputText.trim());
+
+      // Track attempted problem
+      if (user) {
+        const isSuccess = result.status.id === 3; // Assuming 3 = Accepted in your Judge0 setup
+        await updateUserProgress(selectedProblemId, isSuccess, language);
+        
+        if (isSuccess) {
+          toast({
+            title: "Success!",
+            description: "Problem solved successfully! Your progress has been updated.",
+          });
+        }
+      }
     } catch (error) {
       setOutput(`Error executing code: ${(error as Error).message}`);
     } finally {
@@ -143,6 +161,26 @@ const Index = () => {
         onGetHint={handleGetHint}
         onAnalyzeCode={handleAnalyzeCode}
       />
+
+      <div className="flex items-center justify-end h-10 px-4 bg-background border-b">
+        {user ? (
+          <div className="flex items-center gap-4">
+            <p className="text-sm">Logged in as <span className="font-medium">{user.username}</span></p>
+            <Link to="/profile">
+              <Button variant="outline" size="sm">Profile</Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Link to="/login">
+              <Button variant="outline" size="sm">Login</Button>
+            </Link>
+            <Link to="/register">
+              <Button size="sm">Register</Button>
+            </Link>
+          </div>
+        )}
+      </div>
 
       <main className="flex flex-1 overflow-hidden">
         <Tabs defaultValue="workspace" className="flex-1 flex flex-col h-full">
