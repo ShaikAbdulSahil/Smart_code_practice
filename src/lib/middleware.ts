@@ -19,7 +19,7 @@ export const withAuth =
   async (req: AuthenticatedRequest, res: NextApiResponse) => {
     try {
       // Access token from cookies properly
-      const token = req.cookies?.token;
+      const token = req.cookies.token;
 
       if (!token) {
         return res.status(401).json({ message: "Not authenticated" });

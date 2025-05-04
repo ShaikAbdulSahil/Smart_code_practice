@@ -1,54 +1,93 @@
 
 import { SafeUser } from '@/models/user';
 
-// This is a mock implementation to simulate API calls in a non-Next.js environment
+// Service to interact with authentication APIs
+const apiBaseUrl = typeof window !== 'undefined' ? '' : 'http://localhost:3000';
+
 export const authService = {
   async login(email: string, password: string): Promise<SafeUser> {
-    // In development, just return a mock user
-    if (email === 'test@example.com' && password === 'password') {
-      return {
-        _id: '1',
-        username: 'testuser',
-        email: 'test@example.com',
-        createdAt: new Date(),
-        solvedProblems: [],
-        attemptedProblems: []
-      };
+    const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ email, password }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Login failed');
     }
-    throw new Error('Invalid credentials');
+    
+    return response.json();
   },
 
   async register(username: string, email: string, password: string): Promise<SafeUser> {
-    // In development, just return a mock user
-    return {
-      _id: '1',
-      username,
-      email,
-      createdAt: new Date(),
-      solvedProblems: [],
-      attemptedProblems: []
-    };
+    const response = await fetch(`${apiBaseUrl}/api/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ username, email, password }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Registration failed');
+    }
+    
+    return response.json();
   },
 
   async logout(): Promise<void> {
-    // In development, just return success
-    return Promise.resolve();
+    const response = await fetch(`${apiBaseUrl}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Logout failed');
+    }
+    
+    return;
   },
 
   async getUser(): Promise<SafeUser | null> {
-    // In development, return null to simulate not logged in
-    return null;
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/auth/me`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        return null;
+      }
+      
+      return response.json();
+    } catch (error) {
+      console.error('Get user error:', error);
+      return null;
+    }
   },
 
   async updateProgress(problemId: string, solved: boolean, language: string): Promise<SafeUser> {
-    // Return mock updated user
-    return {
-      _id: '1',
-      username: 'testuser',
-      email: 'test@example.com',
-      createdAt: new Date(),
-      solvedProblems: solved ? [{ problemId, solvedAt: new Date(), language }] : [],
-      attemptedProblems: solved ? [] : [{ problemId, attemptedAt: new Date(), language }]
-    };
+    const response = await fetch(`${apiBaseUrl}/api/users/progress`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ problemId, solved, language }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to update progress');
+    }
+    
+    return response.json();
   }
 };
