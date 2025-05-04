@@ -39,9 +39,9 @@ export default function CodeEditor({ language, value, onChange }: CodeEditorProp
     return () => observer.disconnect();
   }, []);
 
-  function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor, monaco: typeof window.monaco) {
+  function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) {
     editorRef.current = editor;
-    monacoRef.current = monaco;
+    monacoRef.current = monacoInstance;
   }
 
   return (

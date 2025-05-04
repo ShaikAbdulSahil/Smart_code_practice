@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import CodeEditor from "@/components/CodeEditor";
 import Terminal from "@/components/Terminal";
 import ProblemView from "@/components/ProblemView";
-import ProblemList from "@/components/ProblemList";
+import ProblemList, { Problem } from "@/components/ProblemList";
 import ResizablePanels from "@/components/ResizablePanels";
 import AIAssistant from "@/components/AIAssistant";
 import { problems } from "@/data/problems";
@@ -159,7 +159,7 @@ const Index = () => {
                 leftPanel={
                   <ProblemView
                     title={selectedProblem.title}
-                    difficulty={selectedProblem.difficulty as "easy" | "medium" | "hard"}
+                    difficulty={selectedProblem.difficulty}
                     description={selectedProblem.description}
                     examples={selectedProblem.examples}
                     constraints={selectedProblem.constraints}
@@ -185,7 +185,7 @@ const Index = () => {
           
           <TabsContent value="problems" className="flex-1 overflow-hidden m-0 p-0">
             <ProblemList
-              problems={problems}
+              problems={problems as Problem[]}
               onSelectProblem={selectProblem}
               selectedProblemId={selectedProblemId}
             />

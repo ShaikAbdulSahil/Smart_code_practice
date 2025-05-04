@@ -1,5 +1,20 @@
 
-export const problems = [
+import { Problem } from "@/components/ProblemList";
+
+type ExtendedProblem = Problem & {
+  description: string;
+  examples: {
+    input: string;
+    output: string;
+    explanation?: string;
+  }[];
+  constraints: string[];
+  starterCode: {
+    [language: string]: string;
+  };
+};
+
+export const problems: ExtendedProblem[] = [
   {
     id: "two-sum",
     title: "Two Sum",

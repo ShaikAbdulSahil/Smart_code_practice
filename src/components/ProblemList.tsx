@@ -9,7 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-type Problem = {
+export type Problem = {
   id: string;
   title: string;
   difficulty: "easy" | "medium" | "hard";
