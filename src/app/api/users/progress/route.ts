@@ -1,6 +1,5 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
@@ -11,8 +10,8 @@ const COOKIE_NAME = 'auth_token';
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get(COOKIE_NAME)?.value;
+    // Get token from cookies directly from the request
+    const token = request.cookies.get(COOKIE_NAME)?.value;
 
     if (!token) {
       return NextResponse.json({ message: "Not authenticated" }, { status: 401 });

@@ -98,11 +98,13 @@ async function handleRegister(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    // Set cookie
-    const cookieStore = cookies();
+    // Create response with the user data
     const response = NextResponse.json(sanitizeUser(insertedUser), { status: 201 });
     
-    cookieStore.set(COOKIE_NAME, token, {
+    // Set the cookie in the response
+    response.cookies.set({
+      name: COOKIE_NAME,
+      value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       sameSite: 'strict',
@@ -152,11 +154,13 @@ async function handleLogin(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    // Set cookie
-    const cookieStore = cookies();
+    // Create response with the user data
     const response = NextResponse.json(sanitizeUser(user));
     
-    cookieStore.set(COOKIE_NAME, token, {
+    // Set the cookie in the response
+    response.cookies.set({
+      name: COOKIE_NAME,
+      value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
       sameSite: 'strict',
@@ -172,10 +176,13 @@ async function handleLogin(request: NextRequest) {
 }
 
 async function handleLogout() {
-  const cookieStore = cookies();
+  // Create response
   const response = NextResponse.json({ message: "Logged out successfully" });
   
-  cookieStore.set(COOKIE_NAME, '', {
+  // Clear the cookie
+  response.cookies.set({
+    name: COOKIE_NAME,
+    value: '',
     expires: new Date(0),
     path: '/',
   });
@@ -185,8 +192,8 @@ async function handleLogout() {
 
 async function handleGetCurrentUser(request: NextRequest) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get(COOKIE_NAME)?.value;
+    // Get token from cookies directly from the request
+    const token = request.cookies.get(COOKIE_NAME)?.value;
 
     if (!token) {
       return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
