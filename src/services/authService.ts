@@ -1,5 +1,7 @@
-
 import { SafeUser } from '@/models/user';
+
+// Add at the top of the file
+export const COOKIE_NAME = 'auth_token';
 
 // Service to interact with authentication APIs
 export const authService = {

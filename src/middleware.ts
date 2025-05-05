@@ -1,6 +1,5 @@
 
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NavigateFunction } from "react-router-dom";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'jwt_fallback_secret';
@@ -11,11 +10,14 @@ const protectedRoutes = ['/profile'];
 // Define auth routes (login/register) that should redirect if already logged in
 const authRoutes = ['/login', '/register'];
 
-export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
-  
+// This middleware will be used by React Router
+export function routeMiddleware(
+  path: string, 
+  navigate: NavigateFunction,
+  getToken: () => string | undefined
+) {
   // Get token from cookies
-  const token = request.cookies.get(COOKIE_NAME)?.value;
+  const token = getToken();
   
   // Check if route is protected and user is not authenticated
   const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
@@ -25,9 +27,8 @@ export function middleware(request: NextRequest) {
   
   // If no token and trying to access protected route
   if (isProtectedRoute && !token) {
-    const url = new URL('/login', request.url);
-    url.searchParams.set('callbackUrl', encodeURI(request.url));
-    return NextResponse.redirect(url);
+    navigate('/login');
+    return false;
   }
   
   // If has token and trying to access auth routes (login/register)
@@ -37,23 +38,14 @@ export function middleware(request: NextRequest) {
       jwt.verify(token, JWT_SECRET);
       
       // If valid, redirect to homepage
-      return NextResponse.redirect(new URL('/', request.url));
+      navigate('/');
+      return false;
     } catch (error) {
       // If token is invalid, continue to auth routes
-      return NextResponse.next();
+      return true;
     }
   }
   
   // For all other cases, continue
-  return NextResponse.next();
+  return true;
 }
-
-// Define which routes this middleware will run on
-export const config = {
-  matcher: [
-    '/profile/:path*',
-    '/login',
-    '/register',
-    '/api/:path*',
-  ]
-};

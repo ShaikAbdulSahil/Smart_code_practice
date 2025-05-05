@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,17 +18,17 @@ import { problems } from "@/data/problems";
 
 export default function ProfilePage() {
   const { user, loading, logout } = useAuth();
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/login");
+      navigate("/login");
     }
-  }, [user, loading, router]);
+  }, [user, loading, navigate]);
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
+    navigate("/login");
   };
 
   if (loading) {

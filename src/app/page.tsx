@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import CodeEditor from "@/components/CodeEditor";
 import Terminal from "@/components/Terminal";
@@ -168,16 +167,16 @@ export default function HomePage() {
         {user ? (
           <div className="flex items-center gap-4">
             <p className="text-sm">Logged in as <span className="font-medium">{user.username}</span></p>
-            <Link href="/profile">
+            <Link to="/profile">
               <Button variant="outline" size="sm">Profile</Button>
             </Link>
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <Link href="/login">
+            <Link to="/login">
               <Button variant="outline" size="sm">Login</Button>
             </Link>
-            <Link href="/register">
+            <Link to="/register">
               <Button size="sm">Register</Button>
             </Link>
           </div>
