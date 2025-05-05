@@ -98,9 +98,10 @@ async function handleRegister(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    // Set cookie - Fixed: cookies() returns an object, not a Promise
+    // Set cookie
+    const cookieStore = cookies();
     const response = NextResponse.json(sanitizeUser(insertedUser), { status: 201 });
-    cookies().set({
+    cookieStore.set({
       name: COOKIE_NAME,
       value: token,
       httpOnly: true,
@@ -152,9 +153,10 @@ async function handleLogin(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    // Set cookie - Fixed: cookies() returns an object, not a Promise
+    // Set cookie
+    const cookieStore = cookies();
     const response = NextResponse.json(sanitizeUser(user));
-    cookies().set({
+    cookieStore.set({
       name: COOKIE_NAME,
       value: token,
       httpOnly: true,
@@ -172,9 +174,9 @@ async function handleLogin(request: NextRequest) {
 }
 
 async function handleLogout() {
-  // Fixed: cookies() returns an object, not a Promise
+  const cookieStore = cookies();
   const response = NextResponse.json({ message: "Logged out successfully" });
-  cookies().set({
+  cookieStore.set({
     name: COOKIE_NAME,
     value: '',
     expires: new Date(0),
@@ -186,8 +188,8 @@ async function handleLogout() {
 
 async function handleGetCurrentUser(request: NextRequest) {
   try {
-    // Fixed: cookies() returns an object, not a Promise
-    const token = cookies().get(COOKIE_NAME)?.value;
+    const cookieStore = cookies();
+    const token = cookieStore.get(COOKIE_NAME)?.value;
 
     if (!token) {
       return NextResponse.json({ message: "Not authenticated" }, { status: 401 });

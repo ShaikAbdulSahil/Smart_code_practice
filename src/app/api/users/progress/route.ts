@@ -11,8 +11,8 @@ const COOKIE_NAME = 'auth_token';
 
 export async function POST(request: NextRequest) {
   try {
-    // Fixed: cookies() returns an object, not a Promise
-    const token = cookies().get(COOKIE_NAME)?.value;
+    const cookieStore = cookies();
+    const token = cookieStore.get(COOKIE_NAME)?.value;
 
     if (!token) {
       return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
