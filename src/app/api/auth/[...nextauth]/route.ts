@@ -98,7 +98,8 @@ async function handleRegister(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    // Set cookie
+    // Set cookie - Fixed: cookies() returns an object, not a Promise
+    const response = NextResponse.json(sanitizeUser(insertedUser), { status: 201 });
     cookies().set({
       name: COOKIE_NAME,
       value: token,
@@ -109,7 +110,7 @@ async function handleRegister(request: NextRequest) {
       path: '/',
     });
 
-    return NextResponse.json(sanitizeUser(insertedUser), { status: 201 });
+    return response;
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
@@ -151,7 +152,8 @@ async function handleLogin(request: NextRequest) {
       { expiresIn: '7d' }
     );
 
-    // Set cookie
+    // Set cookie - Fixed: cookies() returns an object, not a Promise
+    const response = NextResponse.json(sanitizeUser(user));
     cookies().set({
       name: COOKIE_NAME,
       value: token,
@@ -162,7 +164,7 @@ async function handleLogin(request: NextRequest) {
       path: '/',
     });
 
-    return NextResponse.json(sanitizeUser(user));
+    return response;
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
@@ -170,6 +172,8 @@ async function handleLogin(request: NextRequest) {
 }
 
 async function handleLogout() {
+  // Fixed: cookies() returns an object, not a Promise
+  const response = NextResponse.json({ message: "Logged out successfully" });
   cookies().set({
     name: COOKIE_NAME,
     value: '',
@@ -177,11 +181,12 @@ async function handleLogout() {
     path: '/',
   });
 
-  return NextResponse.json({ message: "Logged out successfully" });
+  return response;
 }
 
 async function handleGetCurrentUser(request: NextRequest) {
   try {
+    // Fixed: cookies() returns an object, not a Promise
     const token = cookies().get(COOKIE_NAME)?.value;
 
     if (!token) {
