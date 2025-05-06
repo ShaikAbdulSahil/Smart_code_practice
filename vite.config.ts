@@ -20,10 +20,19 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: 'globalThis',
+      },
+    },
+  },
   define: {
     // Define global.process for client-side
     'process.env': {
       NODE_ENV: JSON.stringify(mode)
-    }
+    },
+    global: 'window',
   }
 }));

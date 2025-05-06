@@ -1,8 +1,6 @@
 
 import { NavigateFunction } from "react-router-dom";
-import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'jwt_fallback_secret';
 const COOKIE_NAME = 'auth_token';
 
 // Define protected routes that require authentication
@@ -33,17 +31,10 @@ export function routeMiddleware(
   
   // If has token and trying to access auth routes (login/register)
   if (isAuthRoute && token) {
-    try {
-      // Verify token is valid
-      jwt.verify(token, JWT_SECRET);
-      
-      // If valid, redirect to homepage
-      navigate('/');
-      return false;
-    } catch (error) {
-      // If token is invalid, continue to auth routes
-      return true;
-    }
+    // We'll rely on the server-side verification instead of client-side JWT verification
+    // Simply having a token is enough to redirect from auth routes
+    navigate('/');
+    return false;
   }
   
   // For all other cases, continue
