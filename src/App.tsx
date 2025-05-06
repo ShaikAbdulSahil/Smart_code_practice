@@ -6,6 +6,7 @@ import { routeMiddleware } from './middleware';
 import { COOKIE_NAME } from './services/authService';
 
 // Lazy load pages for better performance
+const LandingPage = lazy(() => import('./app/landing/page'));
 const HomePage = lazy(() => import('./app/page'));
 const LoginPage = lazy(() => import('./app/login/page'));
 const RegisterPage = lazy(() => import('./app/register/page'));
@@ -31,7 +32,8 @@ function App() {
   return (
     <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/workspace" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />

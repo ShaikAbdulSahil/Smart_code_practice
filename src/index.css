@@ -112,3 +112,15 @@
 .monaco-editor .overflow-guard {
   @apply rounded-md;
 }
+
+@layer utilities {
+  .bg-grid-white {
+    --grid-size: 30px;
+    --grid-strength: 1px;
+    --grid-color: rgba(255, 255, 255, 0.1);
+    
+    background-image: linear-gradient(var(--grid-color) var(--grid-strength), transparent var(--grid-strength)),
+      linear-gradient(90deg, var(--grid-color) var(--grid-strength), transparent var(--grid-strength));
+    background-size: var(--grid-size) var(--grid-size);
+  }
+}
