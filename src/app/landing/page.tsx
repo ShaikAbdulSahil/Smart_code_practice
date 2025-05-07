@@ -279,7 +279,7 @@ function FeatureCard({
       animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-      className="flex flex-col items-center text-center p-8 rounded-xl border bg-card hover:border-primary/20 transition-all duration-300"
+      className="flex flex-col items-center text-center p-8 rounded-xl border bg-card hover:border-primary/20 transition-all duration-300 h-full"
     >
       <div className="p-4 rounded-full bg-primary/10 mb-6 shadow-inner">
         {icon}

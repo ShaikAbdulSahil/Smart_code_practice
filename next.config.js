@@ -3,12 +3,11 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // Define environment variables for client-side
   env: {
     NODE_ENV: process.env.NODE_ENV || 'development',
   },
+  // Polyfill buffer for client-side
   webpack: (config) => {
-    // Polyfill buffer for client-side
     config.resolve.fallback = {
       ...config.resolve.fallback,
       buffer: require.resolve('buffer/'),
@@ -16,12 +15,6 @@ const nextConfig = {
       path: false,
       os: false,
     };
-    
-    // Add __dirname polyfill
-    config.plugins = [
-      ...config.plugins,
-    ];
-    
     return config;
   }
 }

@@ -17,6 +17,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Polyfill for Node.js globals in browser environment
+              window.__dirname = '';
+              window.process = window.process || {};
+              window.process.env = window.process.env || {};
+            `,
+          }}
+        />
+      </head>
       <body>
         <TooltipProvider>
           <AuthProvider>
