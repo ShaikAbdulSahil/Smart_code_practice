@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Code, Terminal, Brain, ArrowRight, Sparkles, Star, MessageSquare } from "lucide-react";
@@ -15,7 +15,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full">
       {/* Hero Section with improved background and animations */}
       <section className="relative flex flex-col items-center justify-center px-4 py-20 md:py-32 bg-gradient-to-br from-primary/5 via-background to-secondary/20 overflow-hidden">
         {/* Animated background grid */}
@@ -91,13 +91,13 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.6 }}
             >
               <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all" asChild>
-                <Link to="/register" className="group gap-2 text-white">
+                <Link href="/register" className="group gap-2 text-white">
                   Start Coding
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="border-2 shadow-sm hover:shadow-md transition-all" asChild>
-                <Link to="/login">Log In</Link>
+                <Link href="/login">Log In</Link>
               </Button>
             </motion.div>
           </motion.div>
@@ -105,7 +105,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section with improved cards */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-background w-full">
         <div className="container max-w-6xl">
           <motion.div
             initial={{ opacity: 0 }}
@@ -136,7 +136,7 @@ export default function LandingPage() {
       </section>
 
       {/* Enhanced Coming Soon Section */}
-      <section className="py-20 bg-gradient-to-br from-secondary/30 via-background to-background relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-secondary/30 via-background to-background relative overflow-hidden w-full">
         {/* Animated dots background */}
         <div className="absolute inset-0 bg-grid-white/5 bg-[size:20px_20px]" />
         
@@ -203,7 +203,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section with improved design */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-background w-full">
         <div className="container max-w-4xl">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -219,7 +219,7 @@ export default function LandingPage() {
             </p>
             <div className="pt-2">
               <Button size="lg" className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all" asChild>
-                <Link to="/workspace" className="group gap-2">
+                <Link href="/workspace" className="group gap-2">
                   Go to Workspace
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -230,7 +230,7 @@ export default function LandingPage() {
       </section>
       
       {/* Footer with improved design */}
-      <footer className="mt-auto py-8 border-t bg-secondary/5">
+      <footer className="mt-auto py-8 border-t bg-secondary/5 w-full">
         <div className="container flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center space-x-2">
             <Code className="h-5 w-5 text-primary" />
@@ -239,13 +239,13 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="flex items-center space-x-6">
-            <Link to="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link href="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Login
             </Link>
-            <Link to="/register" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link href="/register" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Register
             </Link>
-            <Link to="/workspace" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link href="/workspace" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Workspace
             </Link>
           </div>

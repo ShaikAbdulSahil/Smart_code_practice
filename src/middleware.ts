@@ -1,5 +1,6 @@
 
-import { NavigateFunction } from "react-router-dom";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 const COOKIE_NAME = 'auth_token';
 
@@ -8,35 +9,33 @@ const protectedRoutes = ['/profile'];
 // Define auth routes (login/register) that should redirect if already logged in
 const authRoutes = ['/login', '/register'];
 
-// This middleware will be used by React Router
-export function routeMiddleware(
-  path: string, 
-  navigate: NavigateFunction,
-  getToken: () => string | undefined
-) {
-  // Get token from cookies
-  const token = getToken();
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  const { pathname } = request.nextUrl;
   
   // Check if route is protected and user is not authenticated
-  const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   
   // Check if route is an auth route
-  const isAuthRoute = authRoutes.some(route => path.startsWith(route));
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
   
   // If no token and trying to access protected route
   if (isProtectedRoute && !token) {
-    navigate('/login');
-    return false;
+    const url = new URL('/login', request.url);
+    return NextResponse.redirect(url);
   }
   
   // If has token and trying to access auth routes (login/register)
   if (isAuthRoute && token) {
-    // We'll rely on the server-side verification instead of client-side JWT verification
-    // Simply having a token is enough to redirect from auth routes
-    navigate('/');
-    return false;
+    const url = new URL('/', request.url);
+    return NextResponse.redirect(url);
   }
   
   // For all other cases, continue
-  return true;
+  return NextResponse.next();
+}
+
+// Specify which routes the middleware should run on
+export const config = {
+  matcher: ['/profile/:path*', '/login', '/register', '/workspace'],
 }

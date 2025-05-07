@@ -1,8 +1,10 @@
 
+"use client";
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SafeUser } from '@/models/user';
 import { useToast } from '@/components/ui/use-toast';
-import { authService } from '@/services/authService';
+import { authService, COOKIE_NAME } from '@/services/authService';
 
 interface AuthContextType {
   user: SafeUser | null;
