@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       'buffer': 'buffer/',
+      'process': 'process/browser',
     },
   },
   optimizeDeps: {
@@ -30,10 +31,12 @@ export default defineConfig(({ mode }) => ({
     },
   },
   define: {
-    // Define global.process for client-side
+    // Define process.env for client-side
     'process.env': {
       NODE_ENV: JSON.stringify(mode)
     },
+    // Define __dirname for client-side
+    __dirname: JSON.stringify(""),
     global: 'window',
   }
 }));

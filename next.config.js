@@ -12,7 +12,16 @@ const nextConfig = {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       buffer: require.resolve('buffer/'),
+      fs: false,
+      path: false,
+      os: false,
     };
+    
+    // Add __dirname polyfill
+    config.plugins = [
+      ...config.plugins,
+    ];
+    
     return config;
   }
 }
