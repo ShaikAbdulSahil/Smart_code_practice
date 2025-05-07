@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import { routeMiddleware } from './middleware';
 import { COOKIE_NAME } from './services/authService';
 
 // Lazy load pages for better performance
@@ -12,6 +11,11 @@ const LoginPage = lazy(() => import('./app/login/page'));
 const RegisterPage = lazy(() => import('./app/register/page'));
 const ProfilePage = lazy(() => import('./app/profile/page'));
 const NotFoundPage = lazy(() => import('./app/not-found'));
+
+// Define protected routes that require authentication
+const protectedRoutes = ['/profile'];
+// Define auth routes (login/register) that should redirect if already logged in
+const authRoutes = ['/login', '/register'];
 
 function App() {
   const location = useLocation();
@@ -25,8 +29,32 @@ function App() {
       return tokenCookie ? tokenCookie.trim().substring(COOKIE_NAME.length + 1) : undefined;
     };
 
+    // Apply middleware logic directly in App.tsx
+    const applyRouteMiddleware = () => {
+      const token = getToken();
+      const pathname = location.pathname;
+      
+      // Check if route is protected and user is not authenticated
+      const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
+      
+      // Check if route is an auth route
+      const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+      
+      // If no token and trying to access protected route
+      if (isProtectedRoute && !token) {
+        navigate('/login');
+        return;
+      }
+      
+      // If has token and trying to access auth routes (login/register)
+      if (isAuthRoute && token) {
+        navigate('/');
+        return;
+      }
+    };
+
     // Apply middleware on route changes
-    routeMiddleware(location.pathname, navigate, getToken);
+    applyRouteMiddleware();
   }, [location, navigate]);
 
   return (
